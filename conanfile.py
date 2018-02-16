@@ -3,7 +3,7 @@ import os
 import platform
 
 
-class OpenALConan(ConanFile):
+class Bullet3Conan(ConanFile):
     name = "bullet3"
     version = "2.87"
     md5 = "7566fc00d925a742e6f7ec7ba2d352de"
@@ -43,10 +43,9 @@ class OpenALConan(ConanFile):
         extracted_dir = "bullet3-{0}".format(self.version)
         os.rename(extracted_dir, self.source_subfolder)
 
-    def build_requirements(self):
+    def requirements(self):
         if self.options.pybullet:
-            raise RuntimeError("CPython not packaged (yet)")
-            self.build_requires("cpython/3.6.4@bincrafters/stable")
+            self.requires.add("cpython/3.6.4@bincrafters/stable")
 
     def build(self):    
         cmake = CMake(self)
@@ -98,12 +97,6 @@ class OpenALConan(ConanFile):
             "BulletSoftBody",
             "Bullet3Common",
             "BulletInverseDynamics",
-            # "Bullet3Common",
-            # "BulletInverseDynamics",
-            # "BulletSoftBody",
-            # "BulletDynamics",
-            # "LinearMath",
-            # "BulletCollision",
         ]
         if platform.system() == "Windows" and self.settings.build_type == "Debug":
             libs = [lib + "_Debug" for lib in libs]
