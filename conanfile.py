@@ -32,7 +32,7 @@ class Bullet3Conan(ConanFile):
         "graphical_benchmark=False",\
         "double_precision=False",\
         "bt2_thread_locks=False",\
-        "btSoftMultiBodyDynamicsWorld=True",\
+        "btSoftMultiBodyDynamicsWorld=False",\
         "pybullet=False",\
         "pybullet_numpy=False",\
         "network_support=False",
