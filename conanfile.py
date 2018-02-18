@@ -8,7 +8,7 @@ class Bullet3Conan(ConanFile):
     version = "2.87"
     md5 = "7566fc00d925a742e6f7ec7ba2d352de"
     description = "Bullet Physics SDK: real-time collision detection and multi-physics simulation for VR, games, visual effects, robotics, machine learning etc."
-    url = "http://bulletphysics.org/"
+    url = "https://github.com/bincrafters/conan-bullet"
     license = "ZLIB"
     exports = ["LICENSE.txt"]
     exports_sources = ["CMakeLists.txt"]
@@ -76,10 +76,8 @@ class Bullet3Conan(ConanFile):
         cmake.install()
 
     def package(self):
-        self.copy("*", dst="include", src="include")
-        self.copy("*", dst="lib", src="lib", links=True)
-        self.copy("*", dst="bin", src="bin")
-
+        pass
+        
     def package_info(self):
         libs = []
         if self.options.bullet3:
@@ -98,11 +96,9 @@ class Bullet3Conan(ConanFile):
             "Bullet3Common",
             "BulletInverseDynamics",
         ]
-        if platform.system() == "Windows" and self.settings.build_type == "Debug":
+        if self.settings.os == "Windows" and self.settings.build_type == "Debug":
             libs = [lib + "_Debug" for lib in libs]
 
         self.cpp_info.includedirs = ["include/bullet"]
-        self.cpp_info.libdirs = ["lib"]
-        self.cpp_info.bindirs = ["bin"]
         self.cpp_info.builddirs = ["lib/cmake/bullet"]
         self.cpp_info.libs = libs
