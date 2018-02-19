@@ -1,9 +1,12 @@
 project(test_package)
 cmake_minimum_required(VERSION 2.8.11)
 
+set(CMAKE_VERBOSE_MAKEFILE TRUE)
+
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
+conan_basic_setup()
 
-add_executable(${PROJECT_NAME} test_package.cpp)
+file(GLOB SOURCE_FILES *.cpp)
 
-target_link_libraries(${PROJECT_NAME} CONAN_PKG::bullet3)
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})

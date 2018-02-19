@@ -38,9 +38,9 @@ class BulletConan(ConanFile):
         "network_support=False",
 
     def source(self):
-        source_url = "https://github.com/bulletphysics/bullet3/archive"
-        tools.get("{0}/{1}.tar.gz".format(source_url, self.version), self.md5)
-        extracted_dir = "bullet3-{0}".format(self.version)
+        source_url = "https://github.com/bulletphysics/bullet3"
+        tools.get("{0}/archive/{1}.tar.gz".format(source_url, self.version), self.md5)
+        extracted_dir = self.name + "3-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
 
     def requirements(self):
