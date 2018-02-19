@@ -3,8 +3,8 @@ import os
 import platform
 
 
-class Bullet3Conan(ConanFile):
-    name = "bullet3"
+class BulletConan(ConanFile):
+    name = "bullet"
     version = "2.87"
     md5 = "7566fc00d925a742e6f7ec7ba2d352de"
     description = "Bullet Physics SDK: real-time collision detection and multi-physics simulation for VR, games, visual effects, robotics, machine learning etc."
