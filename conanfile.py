@@ -30,7 +30,7 @@ class BulletConan(ConanFile):
         "network_support": [True, False],
     }
     default_options = \
-        "shared=True",\
+        "shared=False",\
         "fPIC=True",\
         "bullet3=False",\
         "graphical_benchmark=False",\
