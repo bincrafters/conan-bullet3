@@ -9,6 +9,8 @@ class BulletConan(ConanFile):
     md5 = "7566fc00d925a742e6f7ec7ba2d352de"
     description = "Bullet Physics SDK: real-time collision detection and multi-physics simulation for VR, games, visual effects, robotics, machine learning etc."
     url = "https://github.com/bincrafters/conan-bullet"
+    homepage = "https://pybullet.org/"
+    author = "Bincrafters <bincrafters@gmail.com>"
     license = "ZLIB"
     exports = ["LICENSE.txt"]
     exports_sources = ["CMakeLists.txt"]
@@ -17,6 +19,7 @@ class BulletConan(ConanFile):
     settings = "os", "arch", "compiler", "build_type"
     options = {
         "shared": [True, False],
+        "fPIC": [True, False],
         "bullet3": [True, False],
         "graphical_benchmark": [True, False],
         "double_precision": [True, False],
@@ -27,7 +30,8 @@ class BulletConan(ConanFile):
         "network_support": [True, False],
     }
     default_options = \
-        "shared=True",\
+        "shared=False",\
+        "fPIC=True",\
         "bullet3=False",\
         "graphical_benchmark=False",\
         "double_precision=False",\
@@ -36,6 +40,10 @@ class BulletConan(ConanFile):
         "pybullet=False",\
         "pybullet_numpy=False",\
         "network_support=False",
+
+    def config_options(self):
+        if self.settings.os == "Windows":
+            self.options.remove("fPIC")
 
     def source(self):
         source_url = "https://github.com/bulletphysics/bullet3"
@@ -47,7 +55,7 @@ class BulletConan(ConanFile):
         if self.options.pybullet:
             self.requires.add("cpython/3.6.4@bincrafters/stable")
 
-    def build(self):    
+    def configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["BUILD_BULLET3"] = self.options.bullet3
         if platform.system() == "Windows":
@@ -70,14 +78,18 @@ class BulletConan(ConanFile):
         cmake.definitions["BUILD_UNIT_TESTS"] = False
         if self.settings.compiler == "Visual Studio":
             cmake.definitions["USE_MSVC_RUNTIME_LIBRARY_DLL"] = "MD" in self.settings.compiler.runtime
-
         cmake.configure()
+        return cmake
+
+    def build(self):
+        cmake = self.configure_cmake()
         cmake.build()
-        cmake.install()
 
     def package(self):
-        pass
-        
+        self.copy("LICENSE.txt", dst="licenses", src=self.source_subfolder)
+        cmake = self.configure_cmake()
+        cmake.install()
+
     def package_info(self):
         libs = []
         if self.options.bullet3:
