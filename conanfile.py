@@ -3,13 +3,13 @@ import os
 import platform
 
 
-class BulletConan(ConanFile):
-    name = "bullet"
+class Bullet3Conan(ConanFile):
+    name = "bullet3"
     version = "2.87"
     md5 = "7566fc00d925a742e6f7ec7ba2d352de"
     description = "Bullet Physics SDK: real-time collision detection and multi-physics simulation for VR, games, visual effects, robotics, machine learning etc."
-    url = "https://github.com/bincrafters/conan-bullet"
-    homepage = "https://pybullet.org/"
+    url = "https://github.com/bincrafters/conan-bullet3"
+    homepage = "https://github.com/bulletphysics/bullet3"
     author = "Bincrafters <bincrafters@gmail.com>"
     license = "ZLIB"
     exports = ["LICENSE.txt"]
@@ -46,9 +46,8 @@ class BulletConan(ConanFile):
             self.options.remove("fPIC")
 
     def source(self):
-        source_url = "https://github.com/bulletphysics/bullet3"
-        tools.get("{0}/archive/{1}.tar.gz".format(source_url, self.version), self.md5)
-        extracted_dir = self.name + "3-" + self.version
+        tools.get("{0}/archive/{1}.tar.gz".format(self.homepage, self.version), self.md5)
+        extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
 
     def requirements(self):
