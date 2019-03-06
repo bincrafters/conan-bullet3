@@ -43,6 +43,7 @@ class Bullet3Conan(ConanFile):
         "pybullet_numpy": False,
         "network_support": False,
     }
+    no_copy_source = True
 
     _source_subfolder = "sources"
 
