@@ -1,21 +1,22 @@
+# -*- coding: utf-8 -*-
+
 from conans import CMake, ConanFile, tools
+from conans.tools import get_env
 import os
 import platform
+import tempfile
 
 
 class Bullet3Conan(ConanFile):
     name = "bullet3"
-    version = "2.87"
-    md5 = "7566fc00d925a742e6f7ec7ba2d352de"
+    version = "2.88"
     description = "Bullet Physics SDK: real-time collision detection and multi-physics simulation for VR, games, visual effects, robotics, machine learning etc."
-    url = "https://github.com/bincrafters/conan-bullet3"
     homepage = "https://github.com/bulletphysics/bullet3"
+    url = "https://github.com/bincrafters/conan-bullet3"
     author = "Bincrafters <bincrafters@gmail.com>"
     license = "ZLIB"
-    exports = ["LICENSE.txt"]
-    exports_sources = ["CMakeLists.txt"]
+    exports_sources = ("CMakeLists.txt", "LICENSE.md", )
     generators = "cmake"
-    source_subfolder = "source_subfolder"
     settings = "os", "arch", "compiler", "build_type"
     options = {
         "shared": [True, False],
@@ -29,33 +30,47 @@ class Bullet3Conan(ConanFile):
         "pybullet_numpy": [True, False],
         "network_support": [True, False],
     }
-    default_options = \
-        "shared=False",\
-        "fPIC=True",\
-        "bullet3=False",\
-        "graphical_benchmark=False",\
-        "double_precision=False",\
-        "bt2_thread_locks=False",\
-        "btSoftMultiBodyDynamicsWorld=False",\
-        "pybullet=False",\
-        "pybullet_numpy=False",\
-        "network_support=False",
+    default_options = {
+        "shared": False,
+        "fPIC": True,
+        "bullet3": False,
+        "graphical_benchmark": False,
+        "double_precision": False,
+        "bt2_thread_locks": False,
+        "btSoftMultiBodyDynamicsWorld": False,
+        "pybullet": False,
+        "pybullet_numpy": False,
+        "network_support": False,
+    }
+
+    _source_subfolder = "sources"
 
     def config_options(self):
-        if self.settings.os == "Windows":
+        if self.options.shared or self.settings.os == "Windows":
             self.options.remove("fPIC")
 
     def source(self):
-        tools.get("{0}/archive/{1}.tar.gz".format(self.homepage, self.version), self.md5)
-        extracted_dir = self.name + "-" + self.version
-        os.rename(extracted_dir, self.source_subfolder)
+        filename = "{}-{}.tar.gz".format(self.name, self.version)
+        url = "https://github.com/bulletphysics/bullet3/archive/{}.tar.gz".format(self.version)
+        sha256 = "21c135775527754fc2929db1db5144e92ad0218ae72840a9f162acb467a7bbf9"
+        extracted_dir = "{}-{}".format(self.name, self.version)
+
+        dlfilepath = os.path.join(tempfile.gettempdir(), filename)
+        if os.path.exists(dlfilepath) and not get_env("BULLET3_FORCE_DOWNLOAD", False):
+            self.output.info("Skipping download. Using cached {}".format(dlfilepath))
+        else:
+            self.output.info("Downloading {} from {}".format(self.name, url))
+            tools.download(url, dlfilepath)
+        tools.check_sha256(dlfilepath, sha256)
+        tools.untargz(dlfilepath)
+
+        os.rename(extracted_dir, self._source_subfolder)
 
     def requirements(self):
         if self.options.pybullet:
-            self.requires.add("cpython/3.6.4@bincrafters/stable")
+            self.requires.add("cpython/3.7.2@bincrafters/stable")
 
-    def configure_cmake(self):
-        cmake = CMake(self)
+    def _configure_cmake(self, cmake):
         cmake.definitions["BUILD_BULLET3"] = self.options.bullet3
         if platform.system() == "Windows":
             cmake.definitions["CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS"] = True
@@ -77,17 +92,22 @@ class Bullet3Conan(ConanFile):
         cmake.definitions["BUILD_UNIT_TESTS"] = False
         if self.settings.compiler == "Visual Studio":
             cmake.definitions["USE_MSVC_RUNTIME_LIBRARY_DLL"] = "MD" in self.settings.compiler.runtime
-        cmake.configure()
+        with tools.chdir(self.build_folder):
+            cmake.configure()
         return cmake
 
     def build(self):
-        cmake = self.configure_cmake()
-        cmake.build()
+        cmake = CMake(self)
+        self._configure_cmake(cmake)
+        with tools.chdir(self.build_folder):
+            cmake.build()
 
     def package(self):
-        self.copy("LICENSE.txt", dst="licenses", src=self.source_subfolder)
-        cmake = self.configure_cmake()
-        cmake.install()
+        cmake = CMake(self)
+        self._configure_cmake(cmake)
+        with tools.chdir(self.build_folder):
+            cmake.install()
+        self.copy("LICENSE.txt", src=os.path.join(self.source_folder, self._source_subfolder), dst="licenses")
 
     def package_info(self):
         libs = []
@@ -110,6 +130,6 @@ class Bullet3Conan(ConanFile):
         if self.settings.os == "Windows" and self.settings.build_type == "Debug":
             libs = [lib + "_Debug" for lib in libs]
 
-        self.cpp_info.includedirs = ["include/bullet"]
-        self.cpp_info.builddirs = ["lib/cmake/bullet"]
         self.cpp_info.libs = libs
+        self.cpp_info.includedirs = ["include", "include/bullet"]
+        self.cpp_info.builddirs = ["lib/cmake/bullet"]
