@@ -1,5 +1,5 @@
 [![Download](https://api.bintray.com/packages/bincrafters/public-conan/bullet3%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/bullet3%3Abincrafters/_latestVersion)
-[![Build Status](https://travis-ci.org/bincrafters/conan-bullet3.svg?branch=stable%2F2.88)](https://travis-ci.org/bincrafters/conan-bullet3)
+[![Build Status](https://travis-ci.com/bincrafters/conan-bullet3.svg?branch=stable%2F2.88)](https://travis-ci.com/bincrafters/conan-bullet3)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-bullet3?branch=stable%2F2.88&svg=true)](https://ci.appveyor.com/project/bincrafters/conan-bullet3)
 
 [Conan.io](https://conan.io) package recipe for [*bullet3*](https://github.com/bulletphysics/bullet3).

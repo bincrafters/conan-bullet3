@@ -12,7 +12,7 @@ class Bullet3Conan(ConanFile):
     version = "2.88"
     description = "Bullet Physics SDK: real-time collision detection and multi-physics simulation for VR, games, visual effects, robotics, machine learning etc."
     homepage = "https://github.com/bulletphysics/bullet3"
-    topics = "conan", "bullet", "physics", "simulation", "robotics", "kinematics", "engine",
+    topics = ("conan", "bullet", "physics", "simulation", "robotics", "kinematics", "engine")
     license = "ZLIB"
     url = "https://github.com/bincrafters/conan-bullet3"
     author = "Bincrafters <bincrafters@gmail.com>"
