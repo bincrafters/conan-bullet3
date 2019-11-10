@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from conans import CMake, ConanFile, tools
 from conans.tools import get_env
 import os
@@ -15,7 +13,6 @@ class Bullet3Conan(ConanFile):
     topics = ("conan", "bullet", "physics", "simulation", "robotics", "kinematics", "engine")
     license = "ZLIB"
     url = "https://github.com/bincrafters/conan-bullet3"
-    author = "Bincrafters <bincrafters@gmail.com>"
     exports_sources = ("CMakeLists.txt", "LICENSE.md", )
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
